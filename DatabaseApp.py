@@ -153,9 +153,32 @@ class DatabaseApp:
     #     result = tx.run(query, person_name=person_name)
     #     return [row["name"] for row in result]
 
+
+    def get_episodes(self):
+        with self.driver.session(database="neo4j") as session:
+            #result = session.execute_read(self._get_episodes())
+            results = session.execute_read(self._get_episodes)
+            return results
+            # for row in result:
+            #     print("Found episode: {row}".format(row=row['name']))
+
+    @staticmethod
+    def _get_episodes(tx):
+        query = (
+            "MATCH (e:Episode) return e "
+        )
+        result = tx.run(query)
+        results = [{ 'overall' : record['e'].get('overall'),
+                     'name' : record['e'].get('name'),
+                     'season' :record['e'].get('season'),
+                    'number': record['e'].get('number')} for record in result.data()]
+
+        return results
+
     def find_characters_episodes(self, character_name):
         with self.driver.session(database="neo4j") as session:
             result = session.execute_read(self._find_and_return_characters_episodes, character_name)
+            print(result)
             return result
             # for row in result:
             #     print("Found episode: {row}".format(row=row['name']))

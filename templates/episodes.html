@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Episodes</title>
+</head>
+<body>
+    <table>
+        <tr>
+            <th>Overall</th>
+            <th>Name</th>
+            <th>Season</th>
+            <th>Number in season</th>
+        </tr>
+        {% for ep in episodes %}
+            <tr>
+                <td>{{ ep.overall }}</td>
+                <td>{{ ep.name }}</td>
+                <td>{{ ep.season }}</td>
+                <td>{{ ep.number }}</td>
+            </tr>
+        {% endfor %}
+
+    </table>
+
+</body>
+</html>
