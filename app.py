@@ -23,17 +23,12 @@ def get_episodes_for_tests():
 @app.route("/")
 @app.route("/home")
 def hello():
-    data = get_episodes_for_tests()
-    str_print = ""
-    for row in data:
-        str_print += str(row["name"])
-    return str_print
-    #return render_template('home.html')
+    return render_template('home.html')
 
 
 @app.route("/about")
 def about():
-    return "<h1>About page</h1>"
+    return render_template('home.html', subpage='About Page')
 
 
 @app.route("/episodes")
@@ -46,6 +41,21 @@ def episodes():
     db_app.close()
 
     return render_template('episodes.html', episodes=data)
+
+
+@app.route("/characters")
+def characters():
+    return render_template("home.html", subpage="Characters Page")
+
+
+@app.route("/groups")
+def groups():
+    return render_template("home.html", subpage="Groups Page")
+
+
+@app.route("/writers")
+def writers():
+    return render_template("home.html", subpage="Writers Page")
 
 
 if __name__ == "__main__":
