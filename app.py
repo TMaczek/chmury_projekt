@@ -85,7 +85,6 @@ def groups():
     password = os.environ.get("NEO4J_PASSWORD")
     db_app = DatabaseApp(uri, user, password)
     groups, members = db_app.find_group_data()
-    print(members['Crystal Gems'])
     db_app.close()
     return render_template("groups.html", groups=groups, members=members)
 
