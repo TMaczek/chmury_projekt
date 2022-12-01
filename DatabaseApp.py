@@ -215,6 +215,105 @@ class DatabaseApp:
         result = tx.run(query, character_name=character_name)
         return [row["name"] for row in result]
 
+    def find_character_data(self, character_name):
+        with self.driver.session(database="neo4j") as session:
+            result = session.execute_read(self._find_and_return_character_data, character_name)
+            return result
+
+    @staticmethod
+    def _find_and_return_character_data(tx, character_name):
+        query = (
+            "MATCH (c:Character) -[r:BELONGS_TO] - (g:Group) "
+            "WHERE c.name=$character_name "
+            "RETURN g"
+        )
+        result = tx.run(query, character_name=character_name)
+        groups = [{ 'group' : record['g'].get('name') }for record in result.data()]
+
+        query2 = (
+            "MATCH (c:Character) -[r:APPEARED_IN] - (e:Episode) "
+            "WHERE c.name=$character_name "
+            "RETURN e ORDER BY e.overall"
+        )
+        result2 = tx.run(query2, character_name=character_name)
+        episodes = [{'episode': record['e'].get('name')} for record in result2.data()]
+        return groups, episodes
+
+    def find_episode_data(self, episode_name):
+        with self.driver.session(database="neo4j") as session:
+            result = session.execute_read(self._find_and_return_episode_data, episode_name)
+            return result
+
+    @staticmethod
+    def _find_and_return_episode_data(tx, episode_name):
+        query = (
+            "MATCH (e:Episode) "
+            "WHERE e.name=$episode_name "
+            "RETURN e"
+        )
+        result = tx.run(query, episode_name=episode_name)
+        record = (result.data()[0])
+        episode = {'name': record['e'].get('name'),
+                   'number' : record['e'].get('number'),
+                   'season': record['e'].get('season'),
+                   'overall': record['e'].get('overall')}
+
+        query2 = (
+            "MATCH (c:Character) -[r:APPEARED_IN] - (e:Episode) "
+            "WHERE e.name=$episode_name "
+            "RETURN c"
+        )
+        result2 = tx.run(query2, episode_name=episode_name)
+        characters = [{'character': record['c'].get('name')} for record in result2.data()]
+
+        query3 = (
+            "MATCH (w:Writer) -[wr:WROTE] -> (e:Episode) "
+            "WHERE e.name=$episode_name "
+            "return w"
+        )
+        result3 = tx.run(query3, episode_name=episode_name)
+        writers = [{'writer': record['w'].get('name')} for record in result3.data()]
+        return episode, characters, writers
+
+    def find_writer_data(self, writer_name):
+        with self.driver.session(database="neo4j") as session:
+            result = session.execute_read(self._find_and_return_writer_data, writer_name)
+            return result
+
+    @staticmethod
+    def _find_and_return_writer_data(tx, writer_name):
+        query = (
+            "MATCH (w:Writer) -[wr:WROTE] -> (e:Episode)"
+            "WHERE w.name=$writer_name "
+            "return e ORDER BY e.overall "
+
+        )
+        result = tx.run(query, writer_name=writer_name)
+        episodes = [{ 'episode' : record['e'].get('name') }for record in result.data()]
+        return episodes
+
+    def find_group_data(self):
+        with self.driver.session(database="neo4j") as session:
+            result = session.execute_read(self._find_and_return_groups_data)
+            return result
+
+    @staticmethod
+    def _find_and_return_groups_data(tx):
+        query = (
+            "MATCH (g:Group) return g"
+        )
+        result = tx.run(query)
+        groups = [{ 'name': record['g'].get('name')} for record in result.data()]
+        members = {}
+        for group in groups:
+            name = group['name']
+            query = (
+                "MATCH (c:Character) -[r:BELONGS_TO] - (g:Group) WHERE g.name=$name return c"
+            )
+            result = tx.run(query, name=name)
+            mem = [{ 'name': record['c'].get('name')} for record in result.data()]
+            members[str(name)] = mem
+        return groups, members
 
     def add_series_data(self):
         self.add_characters("Steven", "Garnet", "Amethyst", "Pearl", "Lars", "Sadie", "Lion",

@@ -46,7 +46,13 @@ def episodes():
 @app.route('/episodes/<path:text>', methods=['GET', 'POST'])
 def all_episodes_routes(text):
     episode =  text.split('/', 1)[0]
-    return render_template("episode.html", name=episode)
+    uri = os.environ.get("NEO4J_URI")
+    user = os.environ.get("NEO4J_USERNAME")
+    password = os.environ.get("NEO4J_PASSWORD")
+    db_app = DatabaseApp(uri, user, password)
+    episode, characters, writers = db_app.find_episode_data(episode)
+    db_app.close()
+    return render_template("episode.html", name=episode, characters=characters, episode=episode, writers=writers)
 
 
 @app.route("/characters/")
@@ -63,12 +69,25 @@ def characters():
 @app.route('/characters/<path:text>', methods=['GET', 'POST'])
 def all_characters_routes(text):
     character= text.split('/', 1)[0]
-    return render_template("character.html", name=character)
+    uri = os.environ.get("NEO4J_URI")
+    user = os.environ.get("NEO4J_USERNAME")
+    password = os.environ.get("NEO4J_PASSWORD")
+    db_app = DatabaseApp(uri, user, password)
+    groups, episodes = db_app.find_character_data(character)
+    db_app.close()
+    return render_template("character.html", name=character, groups=groups, episodes=episodes, ep_count=len(episodes))
 
 
 @app.route("/groups/")
 def groups():
-    return render_template("home.html", subpage="Groups Page")
+    uri = os.environ.get("NEO4J_URI")
+    user = os.environ.get("NEO4J_USERNAME")
+    password = os.environ.get("NEO4J_PASSWORD")
+    db_app = DatabaseApp(uri, user, password)
+    groups, members = db_app.find_group_data()
+    print(members['Crystal Gems'])
+    db_app.close()
+    return render_template("groups.html", groups=groups, members=members)
 
 
 @app.route("/writers/")
@@ -85,7 +104,13 @@ def writers():
 @app.route('/writers/<path:text>', methods=['GET', 'POST'])
 def all_writers_routes(text):
     writer= text.split('/', 1)[0]
-    return render_template("writer.html", name=writer)
+    uri = os.environ.get("NEO4J_URI")
+    user = os.environ.get("NEO4J_USERNAME")
+    password = os.environ.get("NEO4J_PASSWORD")
+    db_app = DatabaseApp(uri, user, password)
+    episodes = db_app.find_writer_data(writer)
+    db_app.close()
+    return render_template("writer.html", name=writer,  episodes=episodes, ep_count = len(episodes))
 
 if __name__ == "__main__":
     app.run(debug=True)

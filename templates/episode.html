@@ -5,18 +5,29 @@
         <div class="row">
             <div class="col">
               <ul class="list-group">
-                  <li class="list-group-item list-group-item-dark active">Episode: {{name}}</li>
-                  <li class="list-group-item list-group-item-dark">Season : </li>
-                  <li class="list-group-item list-group-item-dark"># in season: </li>
-                  <li class="list-group-item list-group-item-dark"># total </li>
-                  <li class="list-group-item list-group-item-dark">Characters appearing:  </li>
+                  <li class="list-group-item list-group-item-dark active">Episode: {{episode.name}}</li>
+                  <li class="list-group-item list-group-item-dark">Season : {{episode.season}}</li>
+                  <li class="list-group-item list-group-item-dark"># in season: {{episode.number}}</li>
+                  <li class="list-group-item list-group-item-dark"># overall {{episode.overall}}</li>
+                  <li class="list-group-item list-group-item-dark active">Writers</li>
+                  {% for writer in writers %}
+
+                  <li class="" style="list-style-type: none">
+                  <a href= \writers\{{ writer.writer.replace(" ", "%20") }} class="list-group-item list-group-item-action list-group-item-dark ">
+                   {{writer.writer}} </a></li>
+                  {% endfor %}
+
 
                 </ul>
             </div>
             <div class="col">
               <ul class="list-group">
                   <li class="list-group-item list-group-item-dark active">Characters:</li>
-                  <li class="list-group-item list-group-item-dark"> ... </li>
+                  {% for character in characters %}
+                  <li class="" style="list-style-type: none">
+                  <a href= \characters\{{ character.character.replace(" ", "%20") }} class="list-group-item list-group-item-action list-group-item-dark ">
+                   {{character.character}} </a></li>
+                  {% endfor %}
                 </ul>
             </div>
       </div>
