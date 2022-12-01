@@ -2,11 +2,14 @@ from neo4j import GraphDatabase
 import logging
 from neo4j.exceptions import ServiceUnavailable
 
+import os
+
 
 class DatabaseApp:
 
     def __init__(self, uri, user, password):
         self.driver = GraphDatabase.driver(uri, auth=(user, password))
+
 
     def close(self):
         # Don't forget to close the driver connection when you are finished with it
@@ -197,6 +200,20 @@ class DatabaseApp:
         )
         result = tx.run(query)
         results = [{'name': record['w'].get('name') } for record in result.data()]
+        return results
+
+    def get_groups(self):
+        with self.driver.session(database="neo4j") as session:
+            results = session.execute_read(self._get_groups)
+            return results
+
+    @staticmethod
+    def _get_groups(tx):
+        query = (
+            "MATCH (g:Group) return g "
+        )
+        result = tx.run(query)
+        results = [{'name': record['g'].get('name') } for record in result.data()]
         return results
 
     def find_characters_episodes(self, character_name):

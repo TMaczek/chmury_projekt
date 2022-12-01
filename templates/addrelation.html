@@ -1,8 +1,200 @@
 {% extends "layout.html" %}
 {% block content %}
-<div class="container ">
-<div class="list-group text-light">
-    Add relation - char to ep, writer to ep, char to group, chars to fusion
-</div>
+<div class="content-section ">
+    <form method="POST" action="{{ url_for('addrelation')}}">
+        {{ cte_form.hidden_tag() }}
+        <fieldset class="form-group">
+            <legend class="border-bottom mb-4 text-light">Add character to episode</legend>
+            <div class="form-group">
+                {{ cte_form.character.label(class="form-control-label text-light") }}
+
+                {% if cte_form.character.errors %}
+                    {{cte_form.character(class="form-control form-control-lg is-invalid")}}
+                    <div class="invalid-feedback">
+                        {% for error in cte_form.character.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+
+                    </div>
+                {% else %}
+                    {{ cte_form.character(class="form-control form-control-lg") }}
+                {% endif %}
+
+            </div>
+
+            <div class="form-group">
+                {{ cte_form.episode.label(class="form-control-label text-light") }}
+
+                {% if cte_form.episode.errors %}
+                    {{cte_form.episode(class="form-control form-control-lg is-invalid")}}
+                    <div class="invalid-feedback">
+                        {% for error in cte_form.episode.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+
+                    </div>
+                {% else %}
+                    {{ cte_form.episode(class="form-control form-control-lg") }}
+                {% endif %}
+
+            </div>
+        </fieldset>
+        <div class="form-group">
+                {{ cte_form.cte_submit(class="btn btn-outline-info") }}
+        </div>
+    </form>
+
+
+    <form method="POST" action="{{ url_for('addrelation')}}">
+        {{ ctg_form.hidden_tag() }}
+        <fieldset class="form-group">
+            <legend class="border-bottom mb-4 text-light">Add character to group</legend>
+            <div class="form-group">
+                {{ ctg_form.character.label(class="form-control-label text-light") }}
+
+                {% if ctg_form.character.errors %}
+                    {{ctg_form.character(class="form-control form-control-lg is-invalid")}}
+                    <div class="invalid-feedback">
+                        {% for error in ctg_form.character.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+
+                    </div>
+                {% else %}
+                    {{ ctg_form.character(class="form-control form-control-lg") }}
+                {% endif %}
+
+            </div>
+
+            <div class="form-group">
+                {{ ctg_form.group.label(class="form-control-label text-light") }}
+
+                {% if ctg_form.group.errors %}
+                    {{ctg_form.group(class="form-control form-control-lg is-invalid")}}
+                    <div class="invalid-feedback">
+                        {% for error in ctg_form.group.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+
+                    </div>
+                {% else %}
+                    {{ ctg_form.group(class="form-control form-control-lg") }}
+                {% endif %}
+
+            </div>
+        </fieldset>
+        <div class="form-group">
+                {{ ctg_form.ctg_submit(class="btn btn-outline-info") }}
+        </div>
+    </form>
+
+
+
+    <form method="POST" action="{{ url_for('addrelation')}}">
+        {{ wte_form.hidden_tag() }}
+        <fieldset class="form-group">
+            <legend class="border-bottom mb-4 text-light">Add writer to episode</legend>
+            <div class="form-group">
+                {{ wte_form.writer.label(class="form-control-label text-light") }}
+
+                {% if wte_form.writer.errors %}
+                    {{wte_form.writer(class="form-control form-control-lg is-invalid")}}
+                    <div class="invalid-feedback">
+                        {% for error in wte_form.writer.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+
+                    </div>
+                {% else %}
+                    {{ wte_form.writer(class="form-control form-control-lg") }}
+                {% endif %}
+
+            </div>
+
+            <div class="form-group">
+                {{ wte_form.episode.label(class="form-control-label text-light") }}
+
+                {% if wte_form.episode.errors %}
+                    {{wte_form.episode(class="form-control form-control-lg is-invalid")}}
+                    <div class="invalid-feedback">
+                        {% for error in wte_form.episode.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+
+                    </div>
+                {% else %}
+                    {{ wte_form.episode(class="form-control form-control-lg") }}
+                {% endif %}
+
+            </div>
+        </fieldset>
+        <div class="form-group">
+                {{ wte_form.wte_submit(class="btn btn-outline-info") }}
+        </div>
+    </form>
+
+
+
+    <form method="POST" action="{{ url_for('addrelation')}}">
+        {{ ctf_form.hidden_tag() }}
+        <fieldset class="form-group">
+            <legend class="border-bottom mb-4 text-light">Define a fusion</legend>
+            <div class="form-group">
+                {{ ctf_form.first_char.label(class="form-control-label text-light") }}
+
+                {% if ctf_form.first_char.errors %}
+                    {{ctf_form.first_char(class="form-control form-control-lg is-invalid")}}
+                    <div class="invalid-feedback">
+                        {% for error in ctf_form.first_char.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+
+                    </div>
+                {% else %}
+                    {{ ctf_form.first_char(class="form-control form-control-lg") }}
+                {% endif %}
+
+            </div>
+
+            <div class="form-group">
+                {{ ctf_form.second_char.label(class="form-control-label text-light") }}
+
+                {% if ctf_form.second_char.errors %}
+                    {{ctf_form.second_char(class="form-control form-control-lg is-invalid")}}
+                    <div class="invalid-feedback">
+                        {% for error in ctf_form.second_char.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+
+                    </div>
+                {% else %}
+                    {{ ctf_form.second_char(class="form-control form-control-lg") }}
+                {% endif %}
+
+            </div>
+
+
+            <div class="form-group">
+                {{ ctf_form.fusion.label(class="form-control-label text-light") }}
+
+                {% if ctf_form.fusion.errors %}
+                    {{ctf_form.fusion(class="form-control form-control-lg is-invalid")}}
+                    <div class="invalid-feedback">
+                        {% for error in ctf_form.fusion.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+
+                    </div>
+                {% else %}
+                    {{ ctf_form.fusion(class="form-control form-control-lg") }}
+                {% endif %}
+
+            </div>
+        </fieldset>
+        <div class="form-group">
+                {{ ctf_form.ctf_submit(class="btn btn-outline-info") }}
+        </div>
+    </form>
+
 </div>
 {% endblock content%}
