@@ -1,0 +1,135 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="content-section ">
+    <form method="POST" action="{{ url_for('characters')}}">
+        {{ char_form.hidden_tag() }}
+        <fieldset class="form-group">
+            <legend class="border-bottom mb-4 text-light">Add Character</legend>
+            <div class="form-group">
+                {{ char_form.name.label(class="form-control-label text-light") }}
+
+                {% if char_form.name.errors %}
+                    {{char_form.name(class="form-control forn-control-lg is-invalid")}}
+                    <div class="invalid-feedback">
+                        {% for error in char_form.name.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+
+                    </div>
+                {% else %}
+                    {{ char_form.name(class="form-control form-control-lg") }}
+                {% endif %}
+
+            </div>
+        </fieldset>
+        <div class="form-group">
+                {{ char_form.char_submit(class="btn btn-outline-info") }}
+        </div>
+    </form>
+
+    <form method="POST" action="{{url_for('writers')}}">
+        {{ writer_form.hidden_tag() }}
+        <fieldset class="form-group">
+            <legend class="border-bottom mb-4 text-light">Add Writer</legend>
+            <div class="form-group">
+                {{ writer_form.name.label(class="form-control-label text-light") }}
+
+                {% if writer_form.name.errors %}
+                    {{writer_form.name(class="form-control forn-control-lg is-invalid")}}
+                    <div class="invalid-feedback">
+                        {% for error in writer_form.name.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+
+                    </div>
+                {% else %}
+                    {{ writer_form.name(class="form-control form-control-lg") }}
+                {% endif %}
+
+            </div>
+        </fieldset>
+        <div class="form-group">
+                {{ writer_form.writer_submit(class="btn btn-outline-info") }}
+        </div>
+    </form>
+
+
+
+            <form method="POST" action="{{url_for('episodes')}}">
+        {{ episode_form.hidden_tag() }}
+        <fieldset class="form-group">
+            <legend class="border-bottom mb-4 text-light">Add Episode</legend>
+            <div class="form-group">
+                {{ episode_form.name.label(class="form-control-label text-light") }}
+
+                {% if episode_form.name.errors %}
+                    {{episode_form.name(class="form-control form-control-lg is-invalid")}}
+                    <div class="invalid-feedback">
+                        {% for error in episode_form.name.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+
+                    </div>
+                {% else %}
+                    {{ episode_form.name(class="form-control form-control-lg") }}
+                {% endif %}
+
+            </div>
+
+            <div class="form-group">
+                {{ episode_form.overall.label(class="form-control-label text-light") }}
+
+                {% if episode_form.overall.errors %}
+                    {{episode_form.overall(class="form-control form-control-lg is-invalid")}}
+                    <div class="invalid-feedback">
+                        {% for error in episode_form.overall.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+
+                    </div>
+                {% else %}
+                    {{ episode_form.overall(class="form-control form-control-lg") }}
+                {% endif %}
+
+            </div>
+
+            <div class="form-group">
+                {{ episode_form.season.label(class="form-control-label text-light") }}
+
+                {% if episode_form.season.errors %}
+                    {{episode_form.season(class="form-control form-control-lg is-invalid")}}
+                    <div class="invalid-feedback">
+                        {% for error in episode_form.season.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+
+                    </div>
+                {% else %}
+                    {{ episode_form.season(class="form-control form-control-lg") }}
+                {% endif %}
+
+            </div>
+
+            <div class="form-group">
+                {{ episode_form.season_num.label(class="form-control-label text-light") }}
+
+                {% if episode_form.season_num.errors %}
+                    {{episode_form.season_num(class="form-control form-control-lg is-invalid")}}
+                    <div class="invalid-feedback">
+                        {% for error in episode_form.season_num.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+
+                    </div>
+                {% else %}
+                    {{ episode_form.season_num(class="form-control form-control-lg") }}
+                {% endif %}
+
+            </div>
+        </fieldset>
+        <div class="form-group">
+                {{ episode_form.episode_submit(class="btn btn-outline-info") }}
+        </div>
+    </form>
+</div>
+{% endblock content%}

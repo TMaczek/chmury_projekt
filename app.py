@@ -1,38 +1,28 @@
 from DatabaseApp import *
-from flask import Flask, render_template
+from flask import Flask, render_template, url_for, flash, redirect
 import os
 from os.path import join, dirname
 from dotenv import load_dotenv
+from forms import CharacterForm, WriterForm, EpisodeForm
 
 dotenv_path = join(dirname(__file__), ".env")
 load_dotenv(dotenv_path)
 
 app = Flask(__name__)
-
-
-def get_episodes_for_tests():
-    uri = os.environ.get("NEO4J_URI")
-    user = os.environ.get("NEO4J_USERNAME")
-    password = os.environ.get("NEO4J_PASSWORD")
-    db_app = DatabaseApp(uri, user, password)
-    data = db_app.find_characters_episodes("Peridot")
-    db_app.close()
-    return data
-
+app.config['SECRET_KEY'] = os.environ.get("SECRET_KEY")
 
 @app.route("/")
 @app.route("/home")
-def hello():
+def home():
     return render_template('home.html')
 
 
-@app.route("/about")
-def about():
-    return render_template('home.html', subpage='About Page')
-
-
-@app.route("/episodes/")
+@app.route("/episodes/", methods=['GET', 'POST'])
 def episodes():
+    episode_form = EpisodeForm()
+    if episode_form.name.data is not None:
+        flash(f'Episode {episode_form.name.data} added.', 'success')
+
     uri = os.environ.get("NEO4J_URI")
     user = os.environ.get("NEO4J_USERNAME")
     password = os.environ.get("NEO4J_PASSWORD")
@@ -55,8 +45,11 @@ def all_episodes_routes(text):
     return render_template("episode.html", name=episode, characters=characters, episode=episode, writers=writers)
 
 
-@app.route("/characters/")
+@app.route("/characters/", methods=['GET', 'POST'])
 def characters():
+    char_form = CharacterForm()
+    if char_form.name.data is not None:
+        flash(f'Character {char_form.name.data} added.', 'success')
     uri = os.environ.get("NEO4J_URI")
     user = os.environ.get("NEO4J_USERNAME")
     password = os.environ.get("NEO4J_PASSWORD")
@@ -89,8 +82,13 @@ def groups():
     return render_template("groups.html", groups=groups, members=members)
 
 
-@app.route("/writers/")
+@app.route("/writers/", methods=['GET', 'POST'])
 def writers():
+    writer_form = WriterForm()
+
+    if writer_form.name.data is not None:
+        flash(f'Writer {writer_form.name.data} added.', 'success')
+
     uri = os.environ.get("NEO4J_URI")
     user = os.environ.get("NEO4J_USERNAME")
     password = os.environ.get("NEO4J_PASSWORD")
@@ -111,15 +109,25 @@ def all_writers_routes(text):
     db_app.close()
     return render_template("writer.html", name=writer,  episodes=episodes, ep_count = len(episodes))
 
+
+@app.route("/fusions/")
+def fusions():
+    return render_template('fusions.html')
+
+
+@app.route("/addnode/", methods=['GET', 'POST'])
+def addnode():
+    char_form = CharacterForm()
+    writer_form = WriterForm()
+    episode_form = EpisodeForm()
+    return render_template('addnode.html', char_form=char_form, writer_form=writer_form, episode_form=episode_form)
+
+
+@app.route("/addrelation/")
+def addrelation():
+    return render_template('addrelation.html')
+
 if __name__ == "__main__":
     app.run(debug=True)
 
-    # Aura queries use an encrypted connection using the "neo4j+s" URI scheme
-    # uri = "neo4j+s://1b0bc938.databases.neo4j.io"
-    # user = "neo4j"
-    # password = "cfG0JN4KRSAc1VjsB-xVyp7KO8jRsMvd7WNdGf0KMj4"
-    # db_app = DatabaseApp(uri, user, password)
-    #
-    # #app.find_characters_episodes("Peridot")
-    #
-    # db_app.close()
+
