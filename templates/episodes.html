@@ -11,7 +11,9 @@
         {% for ep in episodes %}
             <tr>
                 <td>{{ ep.overall }}</td>
-                <td>{{ ep.name }}</td>
+                <td>
+                <a href={{ ep.name.replace(" ", "%20") }} class="link-light">{{ ep.name }}</a>
+                </td>
                 <td>{{ ep.season }}</td>
                 <td>{{ ep.number }}</td>
             </tr>

@@ -31,7 +31,7 @@ def about():
     return render_template('home.html', subpage='About Page')
 
 
-@app.route("/episodes")
+@app.route("/episodes/")
 def episodes():
     uri = os.environ.get("NEO4J_URI")
     user = os.environ.get("NEO4J_USERNAME")
@@ -43,20 +43,49 @@ def episodes():
     return render_template('episodes.html', episodes=data)
 
 
-@app.route("/characters")
+@app.route('/episodes/<path:text>', methods=['GET', 'POST'])
+def all_episodes_routes(text):
+    episode =  text.split('/', 1)[0]
+    return render_template("episode.html", name=episode)
+
+
+@app.route("/characters/")
 def characters():
-    return render_template("home.html", subpage="Characters Page")
+    uri = os.environ.get("NEO4J_URI")
+    user = os.environ.get("NEO4J_USERNAME")
+    password = os.environ.get("NEO4J_PASSWORD")
+    db_app = DatabaseApp(uri, user, password)
+    data = db_app.get_characters()
+    db_app.close()
+    return render_template("characters.html", names=data)
 
 
-@app.route("/groups")
+@app.route('/characters/<path:text>', methods=['GET', 'POST'])
+def all_characters_routes(text):
+    character= text.split('/', 1)[0]
+    return render_template("character.html", name=character)
+
+
+@app.route("/groups/")
 def groups():
     return render_template("home.html", subpage="Groups Page")
 
 
-@app.route("/writers")
+@app.route("/writers/")
 def writers():
-    return render_template("home.html", subpage="Writers Page")
+    uri = os.environ.get("NEO4J_URI")
+    user = os.environ.get("NEO4J_USERNAME")
+    password = os.environ.get("NEO4J_PASSWORD")
+    db_app = DatabaseApp(uri, user, password)
+    data = db_app.get_writers()
+    db_app.close()
+    return render_template("writers.html", names=data)
 
+
+@app.route('/writers/<path:text>', methods=['GET', 'POST'])
+def all_writers_routes(text):
+    writer= text.split('/', 1)[0]
+    return render_template("writer.html", name=writer)
 
 if __name__ == "__main__":
     app.run(debug=True)

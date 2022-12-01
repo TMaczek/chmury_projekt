@@ -153,14 +153,10 @@ class DatabaseApp:
     #     result = tx.run(query, person_name=person_name)
     #     return [row["name"] for row in result]
 
-
     def get_episodes(self):
         with self.driver.session(database="neo4j") as session:
-            #result = session.execute_read(self._get_episodes())
             results = session.execute_read(self._get_episodes)
             return results
-            # for row in result:
-            #     print("Found episode: {row}".format(row=row['name']))
 
     @staticmethod
     def _get_episodes(tx):
@@ -173,6 +169,34 @@ class DatabaseApp:
                      'season' :record['e'].get('season'),
                     'number': record['e'].get('number')} for record in result.data()]
 
+        return results
+
+    def get_characters(self):
+        with self.driver.session(database="neo4j") as session:
+            results = session.execute_read(self._get_characters)
+            return results
+
+    @staticmethod
+    def _get_characters(tx):
+        query = (
+            "MATCH (c:Character) return c "
+        )
+        result = tx.run(query)
+        results = [{'name': record['c'].get('name') } for record in result.data()]
+        return results
+
+    def get_writers(self):
+        with self.driver.session(database="neo4j") as session:
+            results = session.execute_read(self._get_writers)
+            return results
+
+    @staticmethod
+    def _get_writers(tx):
+        query = (
+            "MATCH (w:Writer) return w "
+        )
+        result = tx.run(query)
+        results = [{'name': record['w'].get('name') } for record in result.data()]
         return results
 
     def find_characters_episodes(self, character_name):
