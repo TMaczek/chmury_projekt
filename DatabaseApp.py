@@ -216,6 +216,20 @@ class DatabaseApp:
         results = [{'name': record['g'].get('name') } for record in result.data()]
         return results
 
+    def get_fusions(self):
+        with self.driver.session(database="neo4j") as session:
+            results = session.execute_read(self._get_fusions)
+            return results
+
+    @staticmethod
+    def _get_fusions(tx):
+        query = (
+            "MATCH (c:Character) -[r:FUSION_OF] -> () RETURN DISTINCT c"
+        )
+        result = tx.run(query)
+        results = [{'name': record['c'].get('name') } for record in result.data()]
+        return results
+
     def find_characters_episodes(self, character_name):
         with self.driver.session(database="neo4j") as session:
             result = session.execute_read(self._find_and_return_characters_episodes, character_name)
@@ -231,6 +245,19 @@ class DatabaseApp:
         )
         result = tx.run(query, character_name=character_name)
         return [row["name"] for row in result]
+
+    def find_fusion_parts(self, character_name):
+        with self.driver.session(database="neo4j") as session:
+            result = session.execute_read(self._find_and_return_fusion_parts, character_name)
+            return result
+
+    @staticmethod
+    def _find_and_return_fusion_parts(tx, character_name):
+        query = (
+            "MATCH (c:Character) -[r:FUSION_OF] -> (f:Character) WHERE c.name = $character_name RETURN f "
+        )
+        result = tx.run(query, character_name=character_name)
+        return [row['f'].get('name') for row in result.data()]
 
     def find_character_data(self, character_name):
         with self.driver.session(database="neo4j") as session:

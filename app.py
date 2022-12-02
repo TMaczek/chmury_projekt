@@ -99,7 +99,16 @@ def all_writers_routes(text):
 
 @app.route("/fusions/")
 def fusions():
-    return render_template('fusions.html')
+    db_app = DatabaseApp(uri, user, password)
+    fusion_names = db_app.get_fusions()
+    fusions = []
+    for pair in fusion_names:
+        name = pair['name']
+        parts = db_app.find_fusion_parts(name)
+        fusions.append( { 'name' : name, 'parts': parts})
+    db_app.close()
+    print(fusions)
+    return render_template('fusions.html', data = fusions)
 
 
 @app.route("/addnode/", methods=['GET', 'POST'])

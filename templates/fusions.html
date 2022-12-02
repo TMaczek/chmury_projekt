@@ -1,9 +1,18 @@
 {% extends "layout.html" %}
 {% block content %}
 <div class="container ">
-<div class="list-group text-light">
-    Fusions TBA
+    <table class="table text-light">
+        <tr>
+            <th>Name of fusion</th>
+            <th>Characters in fusion</th>
+        </tr>
+        {% for pair in data %}
+            <tr>
+                <td>{{ pair.name }}</td>
+                <td>{{ pair.parts[0] }} + {{pair.parts[1]}} </td>
+            </tr>
+        {% endfor %}
 
-</div>
+    </table>
 </div>
 {% endblock content%}
