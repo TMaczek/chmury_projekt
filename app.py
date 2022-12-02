@@ -3,7 +3,7 @@ from flask import Flask, render_template, url_for, flash, redirect, request
 import os
 from os.path import join, dirname
 from dotenv import load_dotenv
-from forms import CharacterForm, WriterForm, EpisodeForm, CharacterToEpisode, CharacterToGroup, WriterToEpisode, CharactersToFusion
+from forms import *
 
 dotenv_path = join(dirname(__file__), ".env")
 load_dotenv(dotenv_path)
@@ -145,7 +145,6 @@ def addnode():
 
 @app.route("/addrelation/", methods=['GET', 'POST'])
 def addrelation():
-    print(request.form)
     db_app = DatabaseApp(uri, user, password)
     res = db_app.get_characters()
     char_choices = []
@@ -239,7 +238,87 @@ def addrelation():
 
     return render_template('addrelation.html', cte_form=cte_form, ctg_form=ctg_form, wte_form=wte_form, ctf_form=ctf_form)
 
+
+@app.route("/deletenode/", methods=['GET', 'POST'])
+def deletenode():
+    #skopiowane z wyzej - moze funkja??
+    db_app = DatabaseApp(uri, user, password)
+    res = db_app.get_characters()
+    char_choices = []
+    for pair in res:
+        char_choices.append( (pair['name'], pair['name']) )
+
+    res = db_app.get_episodes()
+    episode_choices = []
+    for pair in res:
+        episode_choices.append( (pair['name'], pair['name']) )
+
+    res = db_app.get_writers()
+    writer_choices = []
+    for pair in res:
+        writer_choices.append( (pair['name'], pair['name']) )
+
+    delete_character = DeleteCharacter()
+    delete_episode = DeleteEpisode()
+    delete_writer = DeleteWriter()
+
+    delete_character.character.choices = char_choices
+    delete_episode.episode.choices = episode_choices
+    delete_writer.writer.choices = writer_choices
+    db_app.close()
+    return render_template('deletenode.html', delete_character=delete_character, delete_episode=delete_episode, delete_writer=delete_writer)
+
+
+@app.route("/deleterelation/", methods=['GET', 'POST'])
+def deleterelation():
+    db_app = DatabaseApp(uri, user, password)
+    res = db_app.get_characters()
+    char_choices = []
+    for pair in res:
+        char_choices.append( (pair['name'], pair['name']) )
+
+    res = db_app.get_episodes()
+    episode_choices = []
+    for pair in res:
+        episode_choices.append( (pair['name'], pair['name']) )
+
+    res = db_app.get_fusions()
+    fusion_choices = []
+    for pair in res:
+        fusion_choices.append( (pair['name'], pair['name']) )
+
+    res = db_app.get_writers()
+    writer_choices = []
+    for pair in res:
+        writer_choices.append( (pair['name'], pair['name']) )
+
+    res = db_app.get_groups()
+    group_choices = []
+    for pair in res:
+        group_choices.append((pair['name'], pair['name']))
+
+    deleteCharacterEpisode = DeleteCharacterFromEpisode()
+    deleteCharacterGroup = DeleteCharacterFromGroup()
+    deleteWriterEpisode = DeleteWriterFromEpisode()
+    deleteFusion = DeleteFusion()
+
+    deleteCharacterEpisode.character.choices = char_choices
+    deleteCharacterEpisode.episode.choices = episode_choices
+
+    deleteCharacterGroup.character.choices = char_choices
+    deleteCharacterGroup.group.choices = group_choices
+
+    deleteWriterEpisode.writer.choices = writer_choices
+    deleteWriterEpisode.episode.choices = episode_choices
+
+    deleteFusion.fusion.choices = fusion_choices
+
+    db_app.close()
+
+    return render_template('deleterelation.html', deleteCharacterEpisode=deleteCharacterEpisode, deleteCharacterGroup=deleteCharacterGroup,
+                           deleteWriterEpisode=deleteWriterEpisode, deleteFusion=deleteFusion)
+
 if __name__ == "__main__":
     app.run(debug=True)
-
+    #_ -> CamelCase
 

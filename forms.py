@@ -53,3 +53,41 @@ class CharactersToFusion(FlaskForm):
     second_char = SelectField('Second Character', validate_choice=False)
     fusion = SelectField('Fusion', validate_choice=False)
     submit = SubmitField('Add to fusion')
+
+
+class DeleteCharacter(FlaskForm):
+    character = SelectField('Character', validate_choice=False)
+    submit = SubmitField('Delete Character')
+
+
+class DeleteEpisode(FlaskForm):
+    episode = SelectField('Episode', validate_choice=False)
+    submit = SubmitField('Delete Episode')
+
+
+class DeleteWriter(FlaskForm):
+    writer = SelectField('Writer', validate_choice=False)
+    submit = SubmitField('Delete Writer')
+
+
+class DeleteCharacterFromEpisode(FlaskForm):
+    character = SelectField('Character', validate_choice=False)
+    episode = SelectField('Episode', validate_choice=False)
+    submit = SubmitField('Delete from episode')
+
+
+class DeleteCharacterFromGroup(FlaskForm):
+    character = SelectField('Character', validate_choice=False)
+    group = SelectField('Group', validate_choice=False)
+    submit = SubmitField('Delete from group')
+
+
+class DeleteWriterFromEpisode(FlaskForm):
+    writer = SelectField('Writer', validate_choice=False)
+    episode = SelectField('Episode', validate_choice=False)
+    submit = SubmitField('Delete writing credits')
+
+
+class DeleteFusion(FlaskForm):
+    fusion = SelectField('Fusion', validate_choice=False)
+    submit = SubmitField('Delete fusion')

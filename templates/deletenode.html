@@ -1,0 +1,83 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="content-section">
+    <form method="POST" action="{{ url_for('deletenode')}}">
+        {{ delete_character.hidden_tag() }}
+        <fieldset class="form-group">
+            <legend class="border-bottom mb-4 text-light">Delete character</legend>
+            <div class="form-group">
+                {{ delete_character.character.label(class="form-control-label text-light") }}
+
+                {% if delete_character.character.errors %}
+                    {{delete_character.character(class="form-control form-control-lg is-invalid")}}
+                    <div class="invalid-feedback">
+                        {% for error in delete_character.character.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+
+                    </div>
+                {% else %}
+                    {{ delete_character.character(class="form-control form-control-lg") }}
+                {% endif %}
+
+            </div>
+        </fieldset>
+        <div class="form-group">
+                {{ delete_character.submit(class="btn btn-outline-info") }}
+        </div>
+    </form>
+
+    <form method="POST" action="{{ url_for('deletenode')}}">
+        {{ delete_episode.hidden_tag() }}
+        <fieldset class="form-group">
+            <legend class="border-bottom mb-4 text-light">Delete episode</legend>
+            <div class="form-group">
+                {{ delete_episode.episode.label(class="form-control-label text-light") }}
+
+                {% if delete_episode.episode.errors %}
+                    {{delete_episode.episode(class="form-control form-control-lg is-invalid")}}
+                    <div class="invalid-feedback">
+                        {% for error in delete_episode.episode.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+
+                    </div>
+                {% else %}
+                    {{ delete_episode.episode(class="form-control form-control-lg") }}
+                {% endif %}
+
+            </div>
+        </fieldset>
+        <div class="form-group">
+                {{ delete_episode.submit(class="btn btn-outline-info") }}
+        </div>
+    </form>
+
+
+    <form method="POST" action="{{ url_for('deletenode')}}">
+        {{ delete_writer.hidden_tag() }}
+        <fieldset class="form-group">
+            <legend class="border-bottom mb-4 text-light">Delete writer</legend>
+            <div class="form-group">
+                {{ delete_writer.writer.label(class="form-control-label text-light") }}
+
+                {% if delete_writer.writer.errors %}
+                    {{delete_writer.writer(class="form-control form-control-lg is-invalid")}}
+                    <div class="invalid-feedback">
+                        {% for error in delete_writer.writer.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+
+                    </div>
+                {% else %}
+                    {{ delete_writer.writer(class="form-control form-control-lg") }}
+                {% endif %}
+
+            </div>
+        </fieldset>
+        <div class="form-group">
+                {{ delete_writer.submit(class="btn btn-outline-info") }}
+        </div>
+    </form>
+</div>
+{% endblock content%}
