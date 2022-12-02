@@ -15,6 +15,20 @@ class DatabaseApp:
         # Don't forget to close the driver connection when you are finished with it
         self.driver.close()
 
+
+    def check_if_exists(self, character_name, node_type):
+        with self.driver.session(database="neo4j") as session:
+            result = session.execute_write(self._check_if_exists, character_name, node_type)
+            return result
+
+    @staticmethod
+    def _check_if_exists(tx, character_name, node_type):
+        query = (
+         "MATCH (p: " + node_type + ") WHERE p.name=$character_name RETURN p"
+        )
+        result = tx.run(query, character_name=character_name)
+        return len(result.data())
+
     def add_generic(self, character_name, node_type):
         with self.driver.session(database="neo4j") as session:
             result = session.execute_write(self._add_and_return, character_name, node_type)
@@ -47,7 +61,7 @@ class DatabaseApp:
          "CREATE (p: Episode { name: $name, season: $season, number: $number, overall: $overall }) "
          "RETURN p"
         )
-        result = tx.run(query, name=name, season=season, number=number, overall=overall)
+        result = tx.run(query, name=name, season=int(season), number=int(number), overall=int(overall))
         try:
             return [{"p": row["p"]["name"]} for row in result]
         except ServiceUnavailable as exception:
@@ -101,6 +115,23 @@ class DatabaseApp:
         )
         tx.run(query)
 
+    def add_constraints(self):
+        with self.driver.session(database="neo4j") as session:
+            result = session.execute_write(self._add_constraints)
+            print("Constraint added")
+
+    @staticmethod
+    def _add_constraints(tx):
+        queries = [
+            "CREATE CONSTRAINT character_name FOR (c:Character) REQUIRE c.name IS UNIQUE",
+            "CREATE CONSTRAINT group_name FOR (g:Group) REQUIRE g.name IS UNIQUE",
+            "CREATE CONSTRAINT writer_name FOR (w:Writer) REQUIRE w.name IS UNIQUE",
+            "CREATE CONSTRAINT episode_name FOR (e:Episode) REQUIRE e.name IS UNIQUE",
+            "CREATE CONSTRAINT episode_overall FOR (e:Episode) REQUIRE e.overall IS UNIQUE"
+        ]
+        for query in queries:
+            tx.run(query)
+
     def add_generic_relation(self, from_where, to_where, what_kind, from_node, to_node):
         with self.driver.session(database="neo4j") as session:
             result = session.execute_write(
@@ -140,22 +171,6 @@ class DatabaseApp:
         for character in characters:
             self.add_generic_relation(fusion, character, "FUSION_OF", "Character", "Character")
 
-    # def find_person(self, person_name):
-    #     with self.driver.session(database="neo4j") as session:
-    #         result = session.execute_read(self._find_and_return_person, person_name)
-    #         for row in result:
-    #             print("Found person: {row}".format(row=row))
-
-    # @staticmethod
-    # def _find_and_return_person(tx, person_name):
-    #     query = (
-    #         "MATCH (p:Person) "
-    #         "WHERE p.name = $person_name "
-    #         "RETURN p.name AS name"
-    #     )
-    #     result = tx.run(query, person_name=person_name)
-    #     return [row["name"] for row in result]
-
     def get_episodes(self):
         with self.driver.session(database="neo4j") as session:
             results = session.execute_read(self._get_episodes)
@@ -164,7 +179,7 @@ class DatabaseApp:
     @staticmethod
     def _get_episodes(tx):
         query = (
-            "MATCH (e:Episode) return e "
+            "MATCH (e:Episode) return e ORDER BY e.overall"
         )
         result = tx.run(query)
         results = [{ 'overall' : record['e'].get('overall'),
@@ -360,6 +375,7 @@ class DatabaseApp:
         return groups, members
 
     def add_series_data(self):
+        self.add_constraints()
         self.add_characters("Steven", "Garnet", "Amethyst", "Pearl", "Lars", "Sadie", "Lion",
                             "Opal", "Sugilite", "Greg", "Connie", "Ruby", "Sapphire", "Jasper",
                             "Peridot", "Lapis", "Sardonyx", "Stevonnie", "Yellow Diamond",

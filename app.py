@@ -1,5 +1,5 @@
 from DatabaseApp import *
-from flask import Flask, render_template, url_for, flash, redirect
+from flask import Flask, render_template, url_for, flash, redirect, request
 import os
 from os.path import join, dirname
 from dotenv import load_dotenv
@@ -23,11 +23,21 @@ def home():
 
 @app.route("/episodes/", methods=['GET', 'POST'])
 def episodes():
-    episode_form = EpisodeForm()
-    if episode_form.name.data is not None:
-        flash(f'Episode {episode_form.name.data} added.', 'success')
-
     db_app = DatabaseApp(uri, user, password)
+
+
+    if request.method == 'POST':
+        episode_name = request.form['name']
+        season = request.form['season']
+        number = request.form['season_num']
+        overall  = request.form['overall']
+        res = db_app.check_if_exists(episode_name, 'Episode')
+        episode_form = EpisodeForm()
+        if episode_form.name.data is not None and res == 0:
+            db_app.add_episode(episode_name, season, number, overall)
+            flash(f'Episode {episode_form.name.data} added.', 'success')
+        elif res == 1:
+            flash(f'Episode {episode_form.name.data} exists already.', 'danger')
 
     data = db_app.get_episodes()
     db_app.close()
@@ -47,11 +57,18 @@ def all_episodes_routes(text):
 
 @app.route("/characters/", methods=['GET', 'POST'])
 def characters():
-    char_form = CharacterForm()
-    if char_form.name.data is not None:
-        flash(f'Character {char_form.name.data} added.', 'success')
-
     db_app = DatabaseApp(uri, user, password)
+
+    if request.method == 'POST':
+        char_name = request.form['name']
+        res = db_app.check_if_exists(char_name, 'Character')
+        char_form = CharacterForm()
+        if char_form.name.data is not None and res == 0:
+            db_app.add_characters(char_name)
+            flash(f'Character {char_form.name.data} added.', 'success')
+        elif res == 1:
+            flash(f'Character {char_form.name.data} exists already.', 'danger')
+
     data = db_app.get_characters()
     db_app.close()
     return render_template("characters.html", names=data)
@@ -76,12 +93,20 @@ def groups():
 
 @app.route("/writers/", methods=['GET', 'POST'])
 def writers():
-    writer_form = WriterForm()
-
-    if writer_form.name.data is not None:
-        flash(f'Writer {writer_form.name.data} added.', 'success')
-
     db_app = DatabaseApp(uri, user, password)
+
+    if request.method == 'POST':
+        writer_name = request.form['name']
+        print(writer_name)
+        res = db_app.check_if_exists(writer_name, 'Writer')
+        print(res)
+        writer_form = WriterForm()
+        if writer_form.name.data is not None and res==0:
+            db_app.add_writers(writer_name)
+            flash(f'Writer {writer_form.name.data} added.', 'success')
+        elif res == 1:
+            flash(f'Writer {writer_form.name.data} exists already.', 'danger')
+
     data = db_app.get_writers()
     db_app.close()
     return render_template("writers.html", names=data)
@@ -121,6 +146,7 @@ def addnode():
 
 @app.route("/addrelation/", methods=['GET', 'POST'])
 def addrelation():
+    print(request.form)
     db_app = DatabaseApp(uri, user, password)
     res = db_app.get_characters()
     char_choices = []
@@ -147,6 +173,14 @@ def addrelation():
     ctg_form = CharacterToGroup()
     wte_form = WriterToEpisode()
     ctf_form = CharactersToFusion()
+    if cte_form.validate_on_submit() and request.form['submit'] == 'Add to episode':
+        flash(f'Character added to episode.', 'success')
+    if ctg_form.validate_on_submit() and request.form['submit'] == 'Add to group':
+        flash(f'Character added to group.', 'success')
+    if wte_form.validate_on_submit() and request.form['submit'] == 'Add writer':
+        flash(f'Writer assigned to episode.', 'success')
+    if wte_form.validate_on_submit() and request.form['submit'] == 'Add to fusion':
+        flash(f'Characters added to fusion.', 'success')
 
     cte_form.character.choices = char_choices
     cte_form.episode.choices = episode_choices

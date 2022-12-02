@@ -22,34 +22,34 @@ class EpisodeForm(FlaskForm):
                            validators=[DataRequired(), Length(min=5)])
         overall = IntegerField('Overall Number', validators=[DataRequired()], widget=NumberInput(min=1, max=160))
         season = IntegerField('Season', validators=[DataRequired()], widget=NumberInput(min=1, max=6))
-        season_num = IntegerField("Season Number", validators=[DataRequired()], widget=NumberInput(min=1, max=26))
+        season_num = IntegerField("Season Number", validators=[DataRequired()], widget=NumberInput(min=1, max=52))
         episode_submit = SubmitField('Add')
 
 
 class CharacterToEpisode(FlaskForm):
 
-    character = SelectField('Character', validate_choice=True)
-    episode = SelectField('Episode', validate_choice=True)
+    character = SelectField('Character', validate_choice=False)
+    episode = SelectField('Episode', validate_choice=False)
 
-    cte_submit = SubmitField('Add')
+    submit = SubmitField('Add to episode')
 
 
 class CharacterToGroup(FlaskForm):
-    character = SelectField('Character', validate_choice=True)
-    group = SelectField('Group', validate_choice=True)
+    character = SelectField('Character', validate_choice=False)
+    group = SelectField('Group', validate_choice=False)
 
-    ctg_submit = SubmitField('Add')
+    submit = SubmitField('Add to group')
 
 
 class WriterToEpisode(FlaskForm):
 
-    writer = SelectField('Writer', validate_choice=True)
-    episode = SelectField('Episode', validate_choice=True)
-    wte_submit = SubmitField('Add')
+    writer = SelectField('Writer', validate_choice=False)
+    episode = SelectField('Episode', validate_choice=False)
+    submit = SubmitField('Add writer')
 
 
 class CharactersToFusion(FlaskForm):
-    first_char = SelectField('First Character', validate_choice=True)
-    second_char = SelectField('Second Character', validate_choice=True)
-    fusion = SelectField('Fusion', validate_choice=True)
-    ctf_submit = SubmitField('Add')
+    first_char = SelectField('First Character', validate_choice=False)
+    second_char = SelectField('Second Character', validate_choice=False)
+    fusion = SelectField('Fusion', validate_choice=False)
+    submit = SubmitField('Add to fusion')
