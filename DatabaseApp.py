@@ -29,6 +29,33 @@ class DatabaseApp:
         result = tx.run(query, character_name=character_name)
         return len(result.data())
 
+    def check_if_exists_relation(self, node1, node2, name1, name2, rel):
+        with self.driver.session(database="neo4j") as session:
+            result = session.execute_write(self._check_if_exists_relation, node1, node2, name1, name2, rel)
+            return result[0]['res']
+
+    @staticmethod
+    def _check_if_exists_relation(tx, node1, node2, name1, name2, rel):
+        query = (
+         "MATCH ( a: " +name1 +" ) -[ r: " + rel+" ] - (b: " + name2 + " ) "
+         "WHERE a.name = '" + node1+"'  AND b.name= '" + node2 + "' return count(r) as res"
+        )
+        result = tx.run(query)
+        return result.data()
+
+    def check_if_fusion(self, name):
+        with self.driver.session(database="neo4j") as session:
+            result = session.execute_write(self._check_if_fusion, name)
+            return result[0]['res']
+
+    @staticmethod
+    def _check_if_fusion(tx, name):
+        query = (
+         "MATCH (f:Character) -[r:FUSION_OF] -> (c:Character) WHERE f.name=$name return count(r) as res"
+        )
+        result = tx.run(query, name=name)
+        return result.data()
+
     def add_generic(self, character_name, node_type):
         with self.driver.session(database="neo4j") as session:
             result = session.execute_write(self._add_and_return, character_name, node_type)

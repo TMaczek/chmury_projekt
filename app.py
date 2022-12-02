@@ -25,7 +25,6 @@ def home():
 def episodes():
     db_app = DatabaseApp(uri, user, password)
 
-
     if request.method == 'POST':
         episode_name = request.form['name']
         season = request.form['season']
@@ -36,7 +35,7 @@ def episodes():
         if episode_form.name.data is not None and res == 0:
             db_app.add_episode(episode_name, season, number, overall)
             flash(f'Episode {episode_form.name.data} added.', 'success')
-        elif res == 1:
+        elif res != 0:
             flash(f'Episode {episode_form.name.data} exists already.', 'danger')
 
     data = db_app.get_episodes()
@@ -66,7 +65,7 @@ def characters():
         if char_form.name.data is not None and res == 0:
             db_app.add_characters(char_name)
             flash(f'Character {char_form.name.data} added.', 'success')
-        elif res == 1:
+        elif res != 0:
             flash(f'Character {char_form.name.data} exists already.', 'danger')
 
     data = db_app.get_characters()
@@ -104,7 +103,7 @@ def writers():
         if writer_form.name.data is not None and res==0:
             db_app.add_writers(writer_name)
             flash(f'Writer {writer_form.name.data} added.', 'success')
-        elif res == 1:
+        elif res != 0:
             flash(f'Writer {writer_form.name.data} exists already.', 'danger')
 
     data = db_app.get_writers()
@@ -168,19 +167,61 @@ def addrelation():
     for pair in res:
         writer_choices.append( (pair['name'], pair['name']) )
 
-    db_app.close()
     cte_form = CharacterToEpisode()
     ctg_form = CharacterToGroup()
     wte_form = WriterToEpisode()
     ctf_form = CharactersToFusion()
-    if cte_form.validate_on_submit() and request.form['submit'] == 'Add to episode':
-        flash(f'Character added to episode.', 'success')
-    if ctg_form.validate_on_submit() and request.form['submit'] == 'Add to group':
-        flash(f'Character added to group.', 'success')
-    if wte_form.validate_on_submit() and request.form['submit'] == 'Add writer':
-        flash(f'Writer assigned to episode.', 'success')
-    if wte_form.validate_on_submit() and request.form['submit'] == 'Add to fusion':
-        flash(f'Characters added to fusion.', 'success')
+    if request.method == 'POST':
+        button = request.form['submit']
+
+        if button == 'Add to episode':
+            character = request.form['character']
+            episode = request.form['episode']
+            res = db_app.check_if_exists_relation(character, episode, "Character", "Episode", 'APPEARED_IN')
+            if cte_form.validate_on_submit() and res==0:
+                db_app.add_appeared(episode, character)
+                flash(f'Character added to episode.', 'success')
+            elif res!=0:
+                flash(f'This relation exists already', 'danger')
+        elif button == 'Add to group':
+            character = request.form['character']
+            group = request.form['group']
+            res = db_app.check_if_exists_relation(character, group, "Character", "Group", 'BELONGS_TO')
+            if ctg_form.validate_on_submit() and res==0:
+                db_app.add_belongs_to(group, character)
+                flash(f'Character added to group.', 'success')
+            elif res!=0:
+                flash(f'This relation exists already', 'danger')
+        elif button == 'Add writer':
+            writer = request.form['writer']
+            episode = request.form['episode']
+            res = db_app.check_if_exists_relation(writer, episode, "Writer", "Episode", 'WROTE')
+            if wte_form.validate_on_submit() and res == 0:
+                db_app.add_wrote(episode, writer)
+                flash(f'Writer assigned to episode.', 'success')
+            elif res != 0:
+                flash(f'This relation exists already', 'danger')
+
+        elif button == 'Add to fusion':
+            first = request.form['first_char']
+            second = request.form['second_char']
+            fusion = request.form['fusion']
+            check_fusion = db_app.check_if_fusion(fusion)
+            if check_fusion!=0:
+                flash(f'This character is already a fusion.', 'danger')
+            elif first!=second and first!=fusion and fusion!=second:
+                res = db_app.check_if_exists_relation(fusion, first, "Character", "Character", 'FUSION_OF')
+                res += db_app.check_if_exists_relation(fusion, second, "Character", "Character", 'FUSION_OF')
+
+                if ctf_form.validate_on_submit() and res==0:
+                    db_app.add_fusion_of(fusion, first, second)
+                    flash(f'Characters added to fusion.', 'success')
+                elif res != 0:
+                    flash(f'This relation (or part of it) exists already', 'danger')
+
+
+            else:
+                flash(f'Duplicate character choices.', 'danger')
 
     cte_form.character.choices = char_choices
     cte_form.episode.choices = episode_choices
@@ -194,6 +235,7 @@ def addrelation():
     ctf_form.first_char.choices = char_choices
     ctf_form.second_char.choices = char_choices
     ctf_form.fusion.choices = char_choices
+    db_app.close()
 
     return render_template('addrelation.html', cte_form=cte_form, ctg_form=ctg_form, wte_form=wte_form, ctf_form=ctf_form)
 
