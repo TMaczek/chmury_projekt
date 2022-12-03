@@ -1,6 +1,20 @@
 {% extends "layout.html" %}
 {% block content %}
 <div class="container text-light">
- {{subpage}}
+ <div class="row">
+            <div class="col">
+                <img src="static/image.png" class="img-fluid" alt="Responsive image">
+            </div>
+            <div class="col">
+                <div class="display-6">
+                    Welcome to home page of my project for Processing Data in Cloud Computing. </br></br>
+                    The project is about animated series 'Steven Universe' and contains data about characters,
+                    episodes of the show, writers of the show and more. </br></br>
+                    From the technical side website is build using Python and Flask, HTML and Bootstrap and data is stored
+                    in Neo4jAuraDB </br></br>
+                    For more information about project, read documentation.
+                </div>
+            </div>
+      </div>
 </div>
 {% endblock content%}
