@@ -3,15 +3,34 @@ import logging
 from neo4j.exceptions import ServiceUnavailable
 
 
+# wiekszosc fukcji działa parami - dostępna przez api i statyczna
+# opisane sa funkcje dostepne, statyczne uzupelniaja ich dzialanie
+# funkcja 'do pary' jest zaraz po pierwszej
+
 class DatabaseApp:
 
     def __init__(self, uri, user, password):
+        """
+        Tworzenie instancji klasy, łaczy z bazą
+        :param uri: url bazy
+        :param user: nazwa użytkownika
+        :param password: hasło
+        """
         self.driver = GraphDatabase.driver(uri, auth=(user, password))
 
     def close(self):
+        """
+        Zamnknięcie połączenia z bazą.
+        """
         self.driver.close()
 
     def check_if_exists(self, character_name, node_type):
+        """
+        Spradzenie czy node o danej nazwie istnieje w bazie
+        :param character_name: atrybut name
+        :param node_type: typ node'a
+        :return: ilosc znalezionych node'ow
+        """
         with self.driver.session(database="neo4j") as session:
             result = session.execute_write(self._check_if_exists, character_name, node_type)
             return result
@@ -25,6 +44,15 @@ class DatabaseApp:
         return len(result.data())
 
     def check_if_exists_relation(self, node1, node2, name1, name2, rel):
+        """
+        Sprawdza czy istnieje relacja
+        :param node1: name 1szego node'a
+        :param node2: name 2giego node'a
+        :param name1: typ 1szego node'a
+        :param name2: typ 2giego node'a
+        :param rel: typ relacji
+        :return: ilosc takich relacji
+        """
         with self.driver.session(database="neo4j") as session:
             result = session.execute_write(self._check_if_exists_relation, node1, node2, name1, name2, rel)
             return result[0]['res']
@@ -39,6 +67,11 @@ class DatabaseApp:
         return result.data()
 
     def check_if_fusion(self, name):
+        """
+        Sprawdza czy postac o danym imieniu jest fuzją
+        :param name: nazwa postaci
+        :return: 0 jesli nie jest, inna wartosc jesli jest
+        """
         with self.driver.session(database="neo4j") as session:
             result = session.execute_write(self._check_if_fusion, name)
             return result[0]['res']
@@ -52,6 +85,11 @@ class DatabaseApp:
         return result.data()
 
     def add_generic(self, character_name, node_type):
+        """
+        Generyczna funkcja dodajaca wezel
+        :param character_name: nazwa wezla
+        :param node_type: typ wezla
+        """
         with self.driver.session(database="neo4j") as session:
             result = session.execute_write(self._add_and_return, character_name, node_type)
             for row in result:
@@ -72,6 +110,13 @@ class DatabaseApp:
             raise
 
     def add_episode(self, name, season, number, overall):
+        """
+        Funkcja dodajaca odcinek
+        :param name: nazwa odcinka
+        :param season: numer sezonu
+        :param number: numer w sezonie
+        :param overall: numer dla calosci
+        """
         with self.driver.session(database="neo4j") as session:
             result = session.execute_write(self._add_and_return_episode, name, season, number, overall)
             for row in result:
@@ -92,18 +137,34 @@ class DatabaseApp:
             raise
 
     def add_characters(self, *character_names):
+        """
+        Dodaje 1 lub wiecej postaci
+        :param character_names: nazwy postaci
+        """
         for character_name in character_names:
             self.add_generic(character_name, "Character")
 
     def add_groups(self, *group_names):
+        """
+        Dodaje 1 lub wiecej grup
+        :param group_names: nazwy grupy
+        """
         for group_name in group_names:
             self.add_generic(group_name, "Group")
 
     def add_writers(self, *writer_names):
+        """
+        Dodaje 1 lub wiecej writerow
+        :param writer_names: nazwy writerow
+        """
         for writer_name in writer_names:
             self.add_generic(writer_name, "Writer")
 
     def delete_by_name(self, name):
+        """
+        Usuwa node o nazwie
+        :param name: name node'a do usuniecia
+        """
         with self.driver.session(database="neo4j") as session:
             session.execute_write(self._delete_by_name, name)
 
@@ -115,6 +176,11 @@ class DatabaseApp:
         tx.run(query, name=name)
 
     def delete_relation_between(self, a, b):
+        """
+        Usuwa dowolna relacje miedzy node'ami
+        :param a: name 1szego node'a
+        :param b: name 2giego node'a
+        """
         with self.driver.session(database="neo4j") as session:
             session.execute_write(self._delete_relation_between, a, b)
 
@@ -126,6 +192,9 @@ class DatabaseApp:
         tx.run(query, a=a, b=b)
 
     def delete_everything(self):
+        """
+        Niebezpieczna funkcja - usuwa wszystko z bazy
+        """
         with self.driver.session(database="neo4j") as session:
             session.execute_write(self._delete_everything)
             print("Database cleaned, it should be empty now")
@@ -138,6 +207,9 @@ class DatabaseApp:
         tx.run(query)
 
     def add_constraints(self):
+        """
+        Dodaje constrainty do bazy
+        """
         with self.driver.session(database="neo4j") as session:
             session.execute_write(self._add_constraints)
             print("Constraint added")
@@ -155,6 +227,14 @@ class DatabaseApp:
             tx.run(query)
 
     def add_generic_relation(self, from_where, to_where, what_kind, from_node, to_node):
+        """
+        Generyczna funkcja do dodawania relacji
+        :param from_where: name node'a startowego
+        :param to_where: name node'a koncowego
+        :param what_kind: typ relacji
+        :param from_node: typ node'a startowego
+        :param to_node: typ node'a koncowego
+        """
         with self.driver.session(database="neo4j") as session:
             result = session.execute_write(
                 self._add_and_return_generic_relation, from_where, to_where, what_kind, from_node, to_node)
@@ -178,22 +258,46 @@ class DatabaseApp:
             raise
 
     def add_wrote(self, episode,  *writers):
+        """
+        Dodaje writera/ow do danego odcinka
+        :param episode: nazwa odcinka
+        :param writers: 1 lub wiecej writerow
+        """
         for writer in writers:
             self.add_generic_relation(writer, episode, "WROTE", "Writer", "Episode")
 
     def add_appeared(self, episode, *characters, ):
+        """
+        Dodaje do odcinka postacie ktore sie w nim pojawily
+        :param episode: nazwa odcinka
+        :param characters: 1 lub wiecej postaci
+        """
         for character in characters:
             self.add_generic_relation(character, episode, "APPEARED_IN", "Character", "Episode")
 
     def add_belongs_to(self, group, *characters):
+        """
+        Dodaje do grupy postacie
+        :param group: nazwa grupy
+        :param characters: 1 lub wiecej postaci
+        """
         for character in characters:
             self.add_generic_relation(character, group, "BELONGS_TO", "Character", "Group")
 
     def add_fusion_of(self, fusion, *characters):
+        """
+        Tworzy fuzje z postaci
+        :param fusion: nazwa fuzji
+        :param characters: postacie wchodzace w fuzje
+        """
         for character in characters:
             self.add_generic_relation(fusion, character, "FUSION_OF", "Character", "Character")
 
     def get_episodes(self):
+        """
+        Pobiera wszystkie odcinki z bazy
+        :return: tablica dictionarow z danymi odcinkow
+        """
         with self.driver.session(database="neo4j") as session:
             results = session.execute_read(self._get_episodes)
             return results
@@ -211,6 +315,10 @@ class DatabaseApp:
         return results
 
     def get_characters(self):
+        """
+        Pobiera dane postaci z bazy
+        :return: tablica z nazwami postaci
+        """
         with self.driver.session(database="neo4j") as session:
             results = session.execute_read(self._get_characters)
             return results
@@ -225,6 +333,10 @@ class DatabaseApp:
         return results
 
     def get_writers(self):
+        """
+        Pobiera dane writerow z bazy
+        :return: tablica z nazwami writerow
+        """
         with self.driver.session(database="neo4j") as session:
             results = session.execute_read(self._get_writers)
             return results
@@ -239,6 +351,10 @@ class DatabaseApp:
         return results
 
     def get_groups(self):
+        """
+        Pobiera dane grup z bazy
+        :return: tablica z nazwami grup
+        """
         with self.driver.session(database="neo4j") as session:
             results = session.execute_read(self._get_groups)
             return results
@@ -253,6 +369,10 @@ class DatabaseApp:
         return results
 
     def get_fusions(self):
+        """
+        Pobiera wszystkie fuzje z bazy
+        :return: tablica z nazwami fuzji
+        """
         with self.driver.session(database="neo4j") as session:
             results = session.execute_read(self._get_fusions)
             return results
@@ -267,6 +387,11 @@ class DatabaseApp:
         return results
 
     def find_characters_episodes(self, character_name):
+        """
+        Znajduje wszystkie odcinki postaci
+        :param character_name: nazwa postaci
+        :return: tablica z danymi odcinkow
+        """
         with self.driver.session(database="neo4j") as session:
             result = session.execute_read(self._find_and_return_characters_episodes, character_name)
             return result
@@ -280,6 +405,11 @@ class DatabaseApp:
         return [row["name"] for row in result]
 
     def find_fusion_parts(self, character_name):
+        """
+        Znajduje elementy fuzji postaci
+        :param character_name: nazwa fuzji
+        :return: tablica z danymi czesci tej fuzji
+        """
         with self.driver.session(database="neo4j") as session:
             result = session.execute_read(self._find_and_return_fusion_parts, character_name)
             return result
@@ -293,6 +423,11 @@ class DatabaseApp:
         return [row['f'].get('name') for row in result.data()]
 
     def find_character_data(self, character_name):
+        """
+        Znajduje i zwraca dane postaci tj grupy i odcinki
+        :param character_name: nazwa postaci
+        :return: tablica grup, tablica odcinkow
+        """
         with self.driver.session(database="neo4j") as session:
             result = session.execute_read(self._find_and_return_character_data, character_name)
             return result
@@ -316,6 +451,11 @@ class DatabaseApp:
         return groups, episodes
 
     def find_episode_data(self, episode_name):
+        """
+        Znajduje dane odcinka, jego writerow i postacie w nim
+        :param episode_name: nazwa odcinka
+        :return: dane odcinka, postacie, writerzy
+        """
         with self.driver.session(database="neo4j") as session:
             result = session.execute_read(self._find_and_return_episode_data, episode_name)
             return result
@@ -350,6 +490,11 @@ class DatabaseApp:
         return episode, characters, writers
 
     def find_writer_data(self, writer_name):
+        """
+        Znajduje odcinki napisane przez writera
+        :param writer_name: nazwa writera
+        :return: odcinki
+        """
         with self.driver.session(database="neo4j") as session:
             result = session.execute_read(self._find_and_return_writer_data, writer_name)
             return result
@@ -367,6 +512,10 @@ class DatabaseApp:
         return episodes
 
     def find_group_data(self):
+        """
+        Znajduje wszystkie grupy i zwraca je wraz z ich czlonkami
+        :return: nazwy grup + ich czlonkowie
+        """
         with self.driver.session(database="neo4j") as session:
             result = session.execute_read(self._find_and_return_groups_data)
             return result
@@ -390,6 +539,10 @@ class DatabaseApp:
         return groups, members
 
     def add_series_data(self):
+        """
+        Dodaje przykladowe dane do tabeli
+        """
+        self.delete_everything()
         self.add_constraints()
         self.add_characters("Steven", "Garnet", "Amethyst", "Pearl", "Lars", "Sadie", "Lion",
                             "Opal", "Sugilite", "Greg", "Connie", "Ruby", "Sapphire", "Jasper",
