@@ -241,8 +241,30 @@ def addrelation():
 
 @app.route("/deletenode/", methods=['GET', 'POST'])
 def deletenode():
-    #skopiowane z wyzej - moze funkja??
     db_app = DatabaseApp(uri, user, password)
+    delete_character = DeleteCharacter()
+    delete_episode = DeleteEpisode()
+    delete_writer = DeleteWriter()
+
+    if request.method == 'POST':
+        button = request.form['submit']
+        print(button)
+        if button == 'Delete Character':
+            character = request.form['character']
+            if delete_character.validate_on_submit():
+                db_app.delete_by_name(character)
+                flash(f'Character {delete_character.character.data} removed.', 'info')
+        elif button == 'Delete Episode':
+            episode = request.form['episode']
+            if delete_episode.validate_on_submit():
+                db_app.delete_by_name(episode)
+                flash(f'Episode {delete_episode.episode.data}  removed', 'info')
+        elif button == 'Delete Writer':
+            writer = request.form['writer']
+            if delete_writer.validate_on_submit():
+                db_app.delete_by_name(writer)
+                flash(f'Writer {delete_writer.writer.data}  removed', 'info')
+
     res = db_app.get_characters()
     char_choices = []
     for pair in res:
@@ -258,10 +280,6 @@ def deletenode():
     for pair in res:
         writer_choices.append( (pair['name'], pair['name']) )
 
-    delete_character = DeleteCharacter()
-    delete_episode = DeleteEpisode()
-    delete_writer = DeleteWriter()
-
     delete_character.character.choices = char_choices
     delete_episode.episode.choices = episode_choices
     delete_writer.writer.choices = writer_choices
@@ -272,6 +290,40 @@ def deletenode():
 @app.route("/deleterelation/", methods=['GET', 'POST'])
 def deleterelation():
     db_app = DatabaseApp(uri, user, password)
+    deleteCharacterEpisode = DeleteCharacterFromEpisode()
+    deleteCharacterGroup = DeleteCharacterFromGroup()
+    deleteWriterEpisode = DeleteWriterFromEpisode()
+    deleteFusion = DeleteFusion()
+
+    if request.method == 'POST':
+        button = request.form['submit']
+        print(button)
+        if button == 'Delete from episode':
+            character = request.form['character']
+            episode = request.form['episode']
+            if deleteCharacterEpisode.validate_on_submit():
+                db_app.delete_relation_between(character, episode)
+                flash(f'Character {deleteCharacterEpisode.character.data} removed from episode {deleteCharacterEpisode.episode.data}.', 'info')
+        elif button == 'Delete from group':
+            character = request.form['character']
+            group = request.form['group']
+            if deleteCharacterGroup.validate_on_submit():
+                db_app.delete_relation_between(character, group)
+                flash(f'Character {deleteCharacterGroup.character.data}  removed from group {deleteCharacterGroup.group.data}', 'info')
+        elif button == 'Delete writing credits':
+            writer = request.form['writer']
+            episode = request.form['episode']
+            if deleteWriterEpisode.validate_on_submit():
+                db_app.delete_relation_between(writer, episode)
+                flash(f'Writer {deleteWriterEpisode.writer.data}  removed from episode {deleteWriterEpisode.episode.data}', 'info')
+        elif button == 'Delete fusion':
+            fusion = request.form['fusion']
+            if deleteFusion.validate_on_submit():
+                parts = db_app.find_fusion_parts(fusion)
+                db_app.delete_relation_between(fusion, parts[0])
+                db_app.delete_relation_between(fusion, parts[1])
+                flash(f'Fusion {deleteFusion.fusion.data}  removed', 'info')
+
     res = db_app.get_characters()
     char_choices = []
     for pair in res:
@@ -296,11 +348,6 @@ def deleterelation():
     group_choices = []
     for pair in res:
         group_choices.append((pair['name'], pair['name']))
-
-    deleteCharacterEpisode = DeleteCharacterFromEpisode()
-    deleteCharacterGroup = DeleteCharacterFromGroup()
-    deleteWriterEpisode = DeleteWriterFromEpisode()
-    deleteFusion = DeleteFusion()
 
     deleteCharacterEpisode.character.choices = char_choices
     deleteCharacterEpisode.episode.choices = episode_choices
