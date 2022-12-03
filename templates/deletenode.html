@@ -14,16 +14,14 @@
                         {% for error in delete_character.character.errors %}
                             <span>{{ error }}</span>
                         {% endfor %}
-
                     </div>
                 {% else %}
                     {{ delete_character.character(class="form-control form-control-lg") }}
                 {% endif %}
-
             </div>
         </fieldset>
         <div class="form-group">
-                {{ delete_character.submit(class="btn btn-outline-info") }}
+            {{ delete_character.submit(class="btn btn-outline-info") }}
         </div>
     </form>
 
@@ -40,19 +38,16 @@
                         {% for error in delete_episode.episode.errors %}
                             <span>{{ error }}</span>
                         {% endfor %}
-
                     </div>
                 {% else %}
                     {{ delete_episode.episode(class="form-control form-control-lg") }}
                 {% endif %}
-
             </div>
         </fieldset>
         <div class="form-group">
-                {{ delete_episode.submit(class="btn btn-outline-info") }}
+            {{ delete_episode.submit(class="btn btn-outline-info") }}
         </div>
     </form>
-
 
     <form method="POST" action="{{ url_for('deletenode')}}">
         {{ delete_writer.hidden_tag() }}
@@ -67,16 +62,14 @@
                         {% for error in delete_writer.writer.errors %}
                             <span>{{ error }}</span>
                         {% endfor %}
-
                     </div>
                 {% else %}
                     {{ delete_writer.writer(class="form-control form-control-lg") }}
                 {% endif %}
-
             </div>
         </fieldset>
         <div class="form-group">
-                {{ delete_writer.submit(class="btn btn-outline-info") }}
+            {{ delete_writer.submit(class="btn btn-outline-info") }}
         </div>
     </form>
 </div>

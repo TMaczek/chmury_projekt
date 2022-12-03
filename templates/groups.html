@@ -1,24 +1,19 @@
 {% extends "layout.html" %}
 {% block content %}
 <div class="container">
-  <div class="row">
-
-    {% for group in groups %}
-    <div class="col">
-        <div class="list-group">
-          <a href="#" class="list-group-item list-group-item-action active">
-              {{group.name}}
-          </a>
-            {% for member in members[group.name] %}
-            <a href= /characters/{{ member.name.replace(" ", "%20") }} class="list-group-item list-group-item-action list-group-item-dark ">{{ member.name }}</a>
-            {% endfor %}
-        </div>
+    <div class="row">
+        {% for group in groups %}
+            <div class="col">
+                <div class="list-group">
+                    <a href="#" class="list-group-item list-group-item-action active">
+                        {{group.name}}
+                    </a>
+                    {% for member in members[group.name] %}
+                        <a href= /characters/{{ member.name.replace(" ", "%20") }} class="list-group-item list-group-item-action list-group-item-dark ">{{ member.name }}</a>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endfor %}
     </div>
-    {% endfor %}
-
-  </div>
-
-
 </div>
-
 {% endblock content%}

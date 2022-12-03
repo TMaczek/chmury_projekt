@@ -2,19 +2,14 @@ from neo4j import GraphDatabase
 import logging
 from neo4j.exceptions import ServiceUnavailable
 
-import os
-
 
 class DatabaseApp:
 
     def __init__(self, uri, user, password):
         self.driver = GraphDatabase.driver(uri, auth=(user, password))
 
-
     def close(self):
-        # Don't forget to close the driver connection when you are finished with it
         self.driver.close()
-
 
     def check_if_exists(self, character_name, node_type):
         with self.driver.session(database="neo4j") as session:
@@ -37,7 +32,7 @@ class DatabaseApp:
     @staticmethod
     def _check_if_exists_relation(tx, node1, node2, name1, name2, rel):
         query = (
-         "MATCH ( a: " +name1 +" ) -[ r: " + rel+" ] - (b: " + name2 + " ) "
+         "MATCH ( a: " + name1 + " ) -[ r: " + rel+" ] - (b: " + name2 + " ) "
          "WHERE a.name = '" + node1+"'  AND b.name= '" + node2 + "' return count(r) as res"
         )
         result = tx.run(query)
@@ -110,29 +105,29 @@ class DatabaseApp:
 
     def delete_by_name(self, name):
         with self.driver.session(database="neo4j") as session:
-            result = session.execute_write(self._delete_by_name, name)
+            session.execute_write(self._delete_by_name, name)
 
     @staticmethod
     def _delete_by_name(tx, name):
         query = (
             "MATCH (n {name: $name}) DETACH DELETE n "
         )
-        result = tx.run(query, name=name)
+        tx.run(query, name=name)
 
     def delete_relation_between(self, a, b):
         with self.driver.session(database="neo4j") as session:
-            result = session.execute_write(self._delete_relation_between, a, b)
+            session.execute_write(self._delete_relation_between, a, b)
 
     @staticmethod
     def _delete_relation_between(tx, a, b):
         query = (
             "MATCH (a)-[r]-(b) WHERE a.name=$a and b.name=$b DELETE r  "
         )
-        result = tx.run(query, a=a, b=b)
+        tx.run(query, a=a, b=b)
 
     def delete_everything(self):
         with self.driver.session(database="neo4j") as session:
-            result = session.execute_write(self._delete_everything)
+            session.execute_write(self._delete_everything)
             print("Database cleaned, it should be empty now")
 
     @staticmethod
@@ -144,7 +139,7 @@ class DatabaseApp:
 
     def add_constraints(self):
         with self.driver.session(database="neo4j") as session:
-            result = session.execute_write(self._add_constraints)
+            session.execute_write(self._add_constraints)
             print("Constraint added")
 
     @staticmethod
@@ -209,11 +204,10 @@ class DatabaseApp:
             "MATCH (e:Episode) return e ORDER BY e.overall"
         )
         result = tx.run(query)
-        results = [{ 'overall' : record['e'].get('overall'),
-                     'name' : record['e'].get('name'),
-                     'season' :record['e'].get('season'),
+        results = [{'overall': record['e'].get('overall'),
+                    'name': record['e'].get('name'),
+                    'season':record['e'].get('season'),
                     'number': record['e'].get('number')} for record in result.data()]
-
         return results
 
     def get_characters(self):
@@ -227,7 +221,7 @@ class DatabaseApp:
             "MATCH (c:Character) return c "
         )
         result = tx.run(query)
-        results = [{'name': record['c'].get('name') } for record in result.data()]
+        results = [{'name': record['c'].get('name')} for record in result.data()]
         return results
 
     def get_writers(self):
@@ -241,7 +235,7 @@ class DatabaseApp:
             "MATCH (w:Writer) return w "
         )
         result = tx.run(query)
-        results = [{'name': record['w'].get('name') } for record in result.data()]
+        results = [{'name': record['w'].get('name')} for record in result.data()]
         return results
 
     def get_groups(self):
@@ -255,7 +249,7 @@ class DatabaseApp:
             "MATCH (g:Group) return g "
         )
         result = tx.run(query)
-        results = [{'name': record['g'].get('name') } for record in result.data()]
+        results = [{'name': record['g'].get('name')} for record in result.data()]
         return results
 
     def get_fusions(self):
@@ -269,16 +263,13 @@ class DatabaseApp:
             "MATCH (c:Character) -[r:FUSION_OF] -> () RETURN DISTINCT c"
         )
         result = tx.run(query)
-        results = [{'name': record['c'].get('name') } for record in result.data()]
+        results = [{'name': record['c'].get('name')} for record in result.data()]
         return results
 
     def find_characters_episodes(self, character_name):
         with self.driver.session(database="neo4j") as session:
             result = session.execute_read(self._find_and_return_characters_episodes, character_name)
-            print(result)
             return result
-            # for row in result:
-            #     print("Found episode: {row}".format(row=row['name']))
 
     @staticmethod
     def _find_and_return_characters_episodes(tx, character_name):
@@ -314,8 +305,7 @@ class DatabaseApp:
             "RETURN g"
         )
         result = tx.run(query, character_name=character_name)
-        groups = [{ 'group' : record['g'].get('name') }for record in result.data()]
-
+        groups = [{'group': record['g'].get('name')}for record in result.data()]
         query2 = (
             "MATCH (c:Character) -[r:APPEARED_IN] - (e:Episode) "
             "WHERE c.name=$character_name "
@@ -340,10 +330,9 @@ class DatabaseApp:
         result = tx.run(query, episode_name=episode_name)
         record = (result.data()[0])
         episode = {'name': record['e'].get('name'),
-                   'number' : record['e'].get('number'),
+                   'number': record['e'].get('number'),
                    'season': record['e'].get('season'),
                    'overall': record['e'].get('overall')}
-
         query2 = (
             "MATCH (c:Character) -[r:APPEARED_IN] - (e:Episode) "
             "WHERE e.name=$episode_name "
@@ -351,7 +340,6 @@ class DatabaseApp:
         )
         result2 = tx.run(query2, episode_name=episode_name)
         characters = [{'character': record['c'].get('name')} for record in result2.data()]
-
         query3 = (
             "MATCH (w:Writer) -[wr:WROTE] -> (e:Episode) "
             "WHERE e.name=$episode_name "
@@ -375,7 +363,7 @@ class DatabaseApp:
 
         )
         result = tx.run(query, writer_name=writer_name)
-        episodes = [{ 'episode' : record['e'].get('name') }for record in result.data()]
+        episodes = [{'episode': record['e'].get('name')}for record in result.data()]
         return episodes
 
     def find_group_data(self):
@@ -389,7 +377,7 @@ class DatabaseApp:
             "MATCH (g:Group) return g"
         )
         result = tx.run(query)
-        groups = [{ 'name': record['g'].get('name')} for record in result.data()]
+        groups = [{'name': record['g'].get('name')} for record in result.data()]
         members = {}
         for group in groups:
             name = group['name']
@@ -397,7 +385,7 @@ class DatabaseApp:
                 "MATCH (c:Character) -[r:BELONGS_TO] - (g:Group) WHERE g.name=$name return c"
             )
             result = tx.run(query, name=name)
-            mem = [{ 'name': record['c'].get('name')} for record in result.data()]
+            mem = [{'name': record['c'].get('name')} for record in result.data()]
             members[str(name)] = mem
         return groups, members
 
@@ -474,4 +462,3 @@ class DatabaseApp:
         self.add_episode("Escapism", 5, 28, 156)
         self.add_appeared("Escapism", "Steven", "Connie", "Stevonnie", "Lion")
         self.add_wrote("Escapism", "Joe Johnston", "Jeff Liu")
-

@@ -14,12 +14,10 @@
                         {% for error in cte_form.character.errors %}
                             <span>{{ error }}</span>
                         {% endfor %}
-
                     </div>
                 {% else %}
                     {{ cte_form.character(class="form-control form-control-lg") }}
                 {% endif %}
-
             </div>
 
             <div class="form-group">
@@ -31,19 +29,16 @@
                         {% for error in cte_form.episode.errors %}
                             <span>{{ error }}</span>
                         {% endfor %}
-
                     </div>
                 {% else %}
                     {{ cte_form.episode(class="form-control form-control-lg") }}
                 {% endif %}
-
             </div>
         </fieldset>
         <div class="form-group">
                 {{ cte_form.submit(class="btn btn-outline-info") }}
         </div>
     </form>
-
 
     <form method="POST" action="{{ url_for('addrelation')}}">
         {{ ctg_form.hidden_tag() }}
@@ -58,12 +53,10 @@
                         {% for error in ctg_form.character.errors %}
                             <span>{{ error }}</span>
                         {% endfor %}
-
                     </div>
                 {% else %}
                     {{ ctg_form.character(class="form-control form-control-lg") }}
                 {% endif %}
-
             </div>
 
             <div class="form-group">
@@ -80,15 +73,12 @@
                 {% else %}
                     {{ ctg_form.group(class="form-control form-control-lg") }}
                 {% endif %}
-
             </div>
         </fieldset>
         <div class="form-group">
                 {{ ctg_form.submit(class="btn btn-outline-info") }}
         </div>
     </form>
-
-
 
     <form method="POST" action="{{ url_for('addrelation')}}">
         {{ wte_form.hidden_tag() }}
@@ -103,12 +93,10 @@
                         {% for error in wte_form.writer.errors %}
                             <span>{{ error }}</span>
                         {% endfor %}
-
                     </div>
                 {% else %}
                     {{ wte_form.writer(class="form-control form-control-lg") }}
                 {% endif %}
-
             </div>
 
             <div class="form-group">
@@ -120,20 +108,16 @@
                         {% for error in wte_form.episode.errors %}
                             <span>{{ error }}</span>
                         {% endfor %}
-
                     </div>
                 {% else %}
                     {{ wte_form.episode(class="form-control form-control-lg") }}
                 {% endif %}
-
             </div>
         </fieldset>
         <div class="form-group">
                 {{ wte_form.submit(class="btn btn-outline-info") }}
         </div>
     </form>
-
-
 
     <form method="POST" action="{{ url_for('addrelation')}}">
         {{ ctf_form.hidden_tag() }}
@@ -148,12 +132,10 @@
                         {% for error in ctf_form.first_char.errors %}
                             <span>{{ error }}</span>
                         {% endfor %}
-
                     </div>
                 {% else %}
                     {{ ctf_form.first_char(class="form-control form-control-lg") }}
                 {% endif %}
-
             </div>
 
             <div class="form-group">
@@ -165,14 +147,11 @@
                         {% for error in ctf_form.second_char.errors %}
                             <span>{{ error }}</span>
                         {% endfor %}
-
                     </div>
                 {% else %}
                     {{ ctf_form.second_char(class="form-control form-control-lg") }}
                 {% endif %}
-
             </div>
-
 
             <div class="form-group">
                 {{ ctf_form.fusion.label(class="form-control-label text-light") }}
@@ -183,18 +162,15 @@
                         {% for error in ctf_form.fusion.errors %}
                             <span>{{ error }}</span>
                         {% endfor %}
-
                     </div>
                 {% else %}
                     {{ ctf_form.fusion(class="form-control form-control-lg") }}
                 {% endif %}
-
             </div>
         </fieldset>
         <div class="form-group">
                 {{ ctf_form.submit(class="btn btn-outline-info") }}
         </div>
     </form>
-
 </div>
 {% endblock content%}

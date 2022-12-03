@@ -2,160 +2,143 @@
 {% block content %}
 <div class="content-section text-light">
     <form method="POST" action="{{ url_for('deleterelation')}}">
-        {{ deleteCharacterEpisode.hidden_tag() }}
+        {{ delete_character_episode.hidden_tag() }}
         <fieldset class="form-group">
             <legend class="border-bottom mb-4 text-light">Remove character from episode</legend>
             <div class="form-group">
-                {{ deleteCharacterEpisode.character.label(class="form-control-label text-light") }}
+                {{ delete_character_episode.character.label(class="form-control-label text-light") }}
 
-                {% if deleteCharacterEpisode.character.errors %}
-                    {{deleteCharacterEpisode.character(class="form-control form-control-lg is-invalid")}}
+                {% if delete_character_episode.character.errors %}
+                    {{delete_character_episode.character(class="form-control form-control-lg is-invalid")}}
                     <div class="invalid-feedback">
-                        {% for error in deleteCharacterEpisode.character.errors %}
+                        {% for error in delete_character_episode.character.errors %}
                             <span>{{ error }}</span>
                         {% endfor %}
-
                     </div>
                 {% else %}
-                    {{ deleteCharacterEpisode.character(class="form-control form-control-lg") }}
+                    {{ delete_character_episode.character(class="form-control form-control-lg") }}
                 {% endif %}
-
             </div>
 
             <div class="form-group">
-                {{ deleteCharacterEpisode.episode.label(class="form-control-label text-light") }}
+                {{ delete_character_episode.episode.label(class="form-control-label text-light") }}
 
-                {% if deleteCharacterEpisode.episode.errors %}
-                    {{deleteCharacterEpisode.episode(class="form-control form-control-lg is-invalid")}}
+                {% if delete_character_episode.episode.errors %}
+                    {{delete_character_episode.episode(class="form-control form-control-lg is-invalid")}}
                     <div class="invalid-feedback">
-                        {% for error in deleteCharacterEpisode.episode.errors %}
+                        {% for error in delete_character_episode.episode.errors %}
                             <span>{{ error }}</span>
                         {% endfor %}
-
                     </div>
                 {% else %}
-                    {{ deleteCharacterEpisode.episode(class="form-control form-control-lg") }}
+                    {{ delete_character_episode.episode(class="form-control form-control-lg") }}
                 {% endif %}
-
             </div>
         </fieldset>
         <div class="form-group">
-                {{ deleteCharacterEpisode.submit(class="btn btn-outline-info") }}
+            {{ delete_character_episode.submit(class="btn btn-outline-info") }}
         </div>
     </form>
 
-        <form method="POST" action="{{ url_for('deleterelation')}}">
-        {{ deleteCharacterGroup.hidden_tag() }}
+    <form method="POST" action="{{ url_for('deleterelation')}}">
+        {{ delete_character_group.hidden_tag() }}
         <fieldset class="form-group">
             <legend class="border-bottom mb-4 text-light">Delete character from group</legend>
             <div class="form-group">
-                {{ deleteCharacterGroup.character.label(class="form-control-label text-light") }}
+                {{ delete_character_group.character.label(class="form-control-label text-light") }}
 
-                {% if deleteCharacterGroup.character.errors %}
-                    {{deleteCharacterGroup.character(class="form-control form-control-lg is-invalid")}}
+                {% if delete_character_group.character.errors %}
+                    {{delete_character_group.character(class="form-control form-control-lg is-invalid")}}
                     <div class="invalid-feedback">
-                        {% for error in deleteCharacterGroup.character.errors %}
+                        {% for error in delete_character_group.character.errors %}
                             <span>{{ error }}</span>
                         {% endfor %}
-
                     </div>
                 {% else %}
-                    {{ deleteCharacterGroup.character(class="form-control form-control-lg") }}
+                    {{ delete_character_group.character(class="form-control form-control-lg") }}
                 {% endif %}
-
             </div>
 
             <div class="form-group">
-                {{ deleteCharacterGroup.group.label(class="form-control-label text-light") }}
+                {{ delete_character_group.group.label(class="form-control-label text-light") }}
 
-                {% if deleteCharacterGroup.group.errors %}
-                    {{deleteCharacterGroup.group(class="form-control form-control-lg is-invalid")}}
+                {% if delete_character_group.group.errors %}
+                    {{delete_character_group.group(class="form-control form-control-lg is-invalid")}}
                     <div class="invalid-feedback">
-                        {% for error in deleteCharacterGroup.group.errors %}
+                        {% for error in delete_character_group.group.errors %}
                             <span>{{ error }}</span>
                         {% endfor %}
-
                     </div>
                 {% else %}
-                    {{ deleteCharacterGroup.group(class="form-control form-control-lg") }}
+                    {{ delete_character_group.group(class="form-control form-control-lg") }}
                 {% endif %}
-
             </div>
         </fieldset>
         <div class="form-group">
-                {{ deleteCharacterGroup.submit(class="btn btn-outline-info") }}
+            {{ delete_character_group.submit(class="btn btn-outline-info") }}
         </div>
     </form>
 
-
     <form method="POST" action="{{ url_for('deleterelation')}}">
-        {{ deleteWriterEpisode.hidden_tag() }}
+        {{ delete_writer_episode.hidden_tag() }}
         <fieldset class="form-group">
             <legend class="border-bottom mb-4 text-light">Delete writer from episode</legend>
             <div class="form-group">
-                {{ deleteWriterEpisode.writer.label(class="form-control-label text-light") }}
+                {{ delete_writer_episode.writer.label(class="form-control-label text-light") }}
 
-                {% if deleteWriterEpisode.writer.errors %}
-                    {{deleteWriterEpisode.writer(class="form-control form-control-lg is-invalid")}}
+                {% if delete_writer_episode.writer.errors %}
+                    {{delete_writer_episode.writer(class="form-control form-control-lg is-invalid")}}
                     <div class="invalid-feedback">
-                        {% for error in deleteWriterEpisode.writer.errors %}
+                        {% for error in delete_writer_episode.writer.errors %}
                             <span>{{ error }}</span>
                         {% endfor %}
-
                     </div>
                 {% else %}
-                    {{ deleteWriterEpisode.writer(class="form-control form-control-lg") }}
+                    {{ delete_writer_episode.writer(class="form-control form-control-lg") }}
                 {% endif %}
-
             </div>
 
             <div class="form-group">
-                {{ deleteWriterEpisode.episode.label(class="form-control-label text-light") }}
+                {{ delete_writer_episode.episode.label(class="form-control-label text-light") }}
 
-                {% if deleteWriterEpisode.episode.errors %}
-                    {{deleteWriterEpisode.episode(class="form-control form-control-lg is-invalid")}}
+                {% if delete_writer_episode.episode.errors %}
+                    {{delete_writer_episode.episode(class="form-control form-control-lg is-invalid")}}
                     <div class="invalid-feedback">
-                        {% for error in deleteWriterEpisode.episode.errors %}
+                        {% for error in delete_writer_episode.episode.errors %}
                             <span>{{ error }}</span>
                         {% endfor %}
-
                     </div>
                 {% else %}
-                    {{ deleteWriterEpisode.episode(class="form-control form-control-lg") }}
+                    {{ delete_writer_episode.episode(class="form-control form-control-lg") }}
                 {% endif %}
-
             </div>
         </fieldset>
         <div class="form-group">
-                {{ deleteWriterEpisode.submit(class="btn btn-outline-info") }}
+            {{ delete_writer_episode.submit(class="btn btn-outline-info") }}
         </div>
     </form>
 
-
-        <form method="POST" action="{{ url_for('deleterelation')}}">
-        {{ deleteFusion.hidden_tag() }}
+    <form method="POST" action="{{ url_for('deleterelation')}}">
+        {{ delete_fusion.hidden_tag() }}
         <fieldset class="form-group">
             <legend class="border-bottom mb-4 text-light">Delete fusion</legend>
             <div class="form-group">
-                {{ deleteFusion.fusion.label(class="form-control-label text-light") }}
-                {% if deleteFusion.fusion.errors %}
-                    {{ctf_form.fusion(class="form-control form-control-lg is-invalid")}}
+                {{ delete_fusion.fusion.label(class="form-control-label text-light") }}
+                {% if delete_fusion.fusion.errors %}
+                    {{delete_fusion.fusion(class="form-control form-control-lg is-invalid")}}
                     <div class="invalid-feedback">
-                        {% for error in deleteFusion.fusion.errors %}
+                        {% for error in delete_fusion.fusion.errors %}
                             <span>{{ error }}</span>
                         {% endfor %}
-
                     </div>
                 {% else %}
-                    {{ deleteFusion.fusion(class="form-control form-control-lg") }}
+                    {{ delete_fusion.fusion(class="form-control form-control-lg") }}
                 {% endif %}
-
             </div>
         </fieldset>
         <div class="form-group">
-                {{ deleteFusion.submit(class="btn btn-outline-info") }}
+            {{ delete_fusion.submit(class="btn btn-outline-info") }}
         </div>
     </form>
-
 </div>
 {% endblock content%}

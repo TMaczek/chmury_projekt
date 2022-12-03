@@ -5,9 +5,10 @@
   <a href="#" class="list-group-item list-group-item-action active">
     Characters
   </a>
-    {% for name in names %}
+
+  {% for name in names %}
     <a href= {{ name.name.replace(" ", "%20") }} class="list-group-item list-group-item-action list-group-item-dark ">{{ name.name }}</a>
-    {% endfor %}
+  {% endfor %}
 </div>
 </div>
 {% endblock content%}
